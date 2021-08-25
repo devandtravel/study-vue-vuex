@@ -1,24 +1,27 @@
 <template>
   <div id="app">
-    <div class="post" v-for="post in posts" :key="post.id">
-      <h2>{{post.title}}</h2>
-      <p>{{post.body}}</p>
+    <PostForm />
+    <h1>Number of valid posts: {{ postsCountValid }}</h1>
+    <h1>Number of all posts: {{ postsCountAll }}</h1>
+    <div class="post" v-for="post in validPosts" :key="post.id">
+      <h2>{{ post.title }}</h2>
+      <p>{{ post.body }}</p>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+import PostForm from './components/PostForm.vue'
 export default {
   name: 'App',
-  data(){
-    return {
-      posts:[]
-    }
+  computed: mapGetters(['validPosts', 'postsCountAll', 'postsCountValid']),
+  methods: mapActions(['fetchPosts']),
+  components: {
+    PostForm
   },
-  async mounted(){
-    const responce = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=5')
-    const posts = await responce.json()
-    this.posts = posts
+  async mounted() {
+    this.fetchPosts(4)
   }
 }
 </script>
@@ -33,7 +36,7 @@ export default {
   margin: 60px auto;
   width: 400px;
 }
-.post{
+.post {
   border: 1px solid #ccc;
   border-radius: 5px;
   margin-bottom: 1rem;
